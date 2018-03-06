@@ -58,7 +58,7 @@ install_Chainer()
 	#sudo tar -zxf cupy-2.2.0.tar.gz
 	#cd cupy-2.2.0
 	#PATH=/usr/local/cuda/bin:$PATH CUDA_PATH=/usr/local/cuda python3 setup.py install 
-	PATH=/usr/local/cuda/bin:$PATH CUDA_PATH=/usr/local/cuda pip install cupy #It install latest CuPy version
+	PATH=/usr/local/cuda/bin:$PATH CUDA_PATH=/usr/local/cuda pip install cupy==2.4.0 #It install latest CuPy version
 	
 	#pip install chainer
 	cd /usr/local
@@ -146,10 +146,10 @@ setup_chainermn_gpu()
 		if [ ! -d /opt/nccl ]; then
 			cd /opt
 			if is_Ubuntu; then				
-				sudo curl -L -O  https://pfnresources.blob.core.windows.net/chainermn-v1-packages/libnccl2_2.1.2-1+cuda9.0_amd64.deb
-				sudo dpkg -i libnccl2_2.1.2-1+cuda9.0_amd64.deb
-				sudo curl -L -O  https://pfnresources.blob.core.windows.net/chainermn-v1-packages/libnccl-dev_2.1.2-1+cuda9.0_amd64.deb
-				sudo dpkg -i libnccl-dev_2.1.2-1+cuda9.0_amd64.deb
+				sudo wget   https://pfnresources.blob.core.windows.net/chainermn-v1-packages/nccl-1.3.4-1.tar.gz
+				tar -zxf nccl-1.3.4-1.tar.gz
+				mv nccl-1.3.4-1 nccl
+				cd nccl && sudo make -j && sudo make install
 			fi
 			if is_centos; then
 				#Working using tar file
@@ -169,9 +169,9 @@ setup_chainermn_gpu()
 		#cudnn 
 		if [ ! -f /usr/local/cuda/include/cudnn.h ]; then
 			cd /usr/local
-			sudo curl -L -O https://www.dropbox.com/s/241tka1skcgcjie/cudnn-9.0-linux-x64-v7.tgz
-			sudo tar zxvf cudnn-9.0-linux-x64-v7.tgz
-			sudo rm -rf cudnn-9.0-linux-x64-v7.tgz
+                        sudo curl -L -O http://developer.download.nvidia.com/compute/redist/cudnn/v7.0.5/cudnn-8.0-linux-x64-v7.tgz
+                        sudo tar zxvf cudnn-8.0-linux-x64-v7.tgz
+                        sudo rm -rf cudnn-8.0-linux-x64-v7.tgz
 						
 		fi
 					
@@ -220,12 +220,12 @@ setup_chainermn_gpu_infiniband()
 			cd /opt				
 			if is_Ubuntu; then
 			
-				#cd /opt && git clone https://github.com/azmigproject/NCCL.git 
-				#cd NCCL && sudo make -j && sudo make install
-				sudo curl -L -O  https://pfnresources.blob.core.windows.net/chainermn-v1-packages/libnccl2_2.1.2-1+cuda9.0_amd64.deb
-				sudo dpkg -i libnccl2_2.1.2-1+cuda9.0_amd64.deb
-				sudo curl -L -O  https://pfnresources.blob.core.windows.net/chainermn-v1-packages/libnccl-dev_2.1.2-1+cuda9.0_amd64.deb
-				sudo dpkg -i libnccl-dev_2.1.2-1+cuda9.0_amd64.deb
+				sudo wget   https://pfnresources.blob.core.windows.net/chainermn-v1-packages/nccl-1.3.4-1.tar.gz
+				tar -zxf nccl-1.3.4-1.tar.gz
+				mv nccl-1.3.4-1 nccl
+				cd nccl && sudo make -j && sudo make install
+				cp /opt/nccl/build/include/nccl.h /usr/local/cuda/include
+				export "PATH=/opt/nccl/build/include:$PATH"				
 			fi
 			if is_centos; then
 				#Working using tar file
@@ -253,10 +253,10 @@ setup_chainermn_gpu_infiniband()
 			sudo rm -rf cudnn-8.0-linux-x64-v7.tgz
 			fi
 			if is_Ubuntu; then
-			sudo curl -L -O https://pfnresources.blob.core.windows.net/chainermn-v1-packages/cudnn-9.0-linux-x64-v7.tgz.gz
-			gzip -d cudnn-9.0-linux-x64-v7.tgz.gz
-			sudo tar zxvf cudnn-9.0-linux-x64-v7.tgz
-			sudo rm -rf cudnn-9.0-linux-x64-v7.tgz
+			sudo curl -L -O https://pfnresources.blob.core.windows.net/chainermn-v1-packages/cudnn-8.0-linux-x64-v7.tgz.gz
+			gzip -d cudnn-8.0-linux-x64-v7.tgz.gz
+			sudo tar zxvf cudnn-8.0-linux-x64-v7.tgz
+			sudo rm -rf cudnn-8.0-linux-x64-v7.tgz
 			fi
 			#Copy CUDNN files to required locaiton			
 			sudo cp cuda/include/cudnn.h /usr/local/cuda/include 

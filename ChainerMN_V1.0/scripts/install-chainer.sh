@@ -241,8 +241,10 @@ setup_cuda_ubuntu()
 	sudo dpkg -i  ${CUDA_DEB}
 	sudo apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/7fa2af80.pub
 	sudo apt-get -y update
-	sudo apt-get -y install cuda
+	sudo apt-get -y install cuda-drivers
+	sudo apt-get -y install cuda-8-0
 	nvidia-smi
+
 }
 mkdir -p /var/local
 SETUP_MARKER=/var/local/chainer-setup.marker
